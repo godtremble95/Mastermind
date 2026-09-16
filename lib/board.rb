@@ -19,13 +19,14 @@ class Board
     Colors.set_colors
     @boundary = Curses::Window.new(@board_hight + @num_colors + 1, @total_length, 3, (Curses.cols - @total_length) / 2)
     @board = @boundary.derwin(@board_hight, @boundary.maxx - BOARDER_COUNT, 0, 1)
-    # TODO: sub window for picking colors
+    @selection = @boundary.derwin(@num_colors, PEG_LENGTH * 2, @board.maxy + 1, 1)
     @boundary.box # temp
   end
 
   def start
     draw_boundary
     draw_board
+    draw_selections
     @boundary.refresh
   end
 
@@ -75,5 +76,14 @@ class Board
       end
     end
     #@board.noutrefresh
+  end
+
+  def draw_selections
+    @num_colors.times do |i|
+      @selection.setpos(i, 0)
+      @selection.attron(Curses.color_pair i + 1) do
+        @selection << "    "
+      end
+    end
   end
 end
